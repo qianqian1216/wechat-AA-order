@@ -1,0 +1,9 @@
+{
+  "name": "recordShareAccess",
+  "version": "1.0.0",
+  "description": "记录分享访问，将访问者openid添加到账本的sharedWith数组",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

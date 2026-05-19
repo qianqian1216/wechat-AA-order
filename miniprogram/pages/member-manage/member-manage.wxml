@@ -1,0 +1,100 @@
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header-section">
+    <text class="header-title">👥 成员管理</text>
+    <text class="header-desc text-tertiary">
+      {{members.length > 0 ? '当前 ' + members.length + ' 位成员' : '还没有成员，快来添加吧'}}
+    </text>
+  </view>
+
+  <!-- 成员展示卡片 -->
+  <view class="member-card card" wx:if="{{members.length > 0}}">
+    <!-- 新建账本提示 -->
+    <view class="new-book-tip" wx:if="{{newBook}}">
+      <t-tag variant="light" theme="primary" size="small">首次创建</t-tag>
+      <text class="tip-text ml-10 text-secondary">请先添加参与AA的成员</text>
+    </view>
+
+    <!-- 成员标签列表 -->
+    <view class="member-tags">
+      <block wx:for="{{members}}" wx:key="_id">
+        <view class="member-tag" catchtap="onDeleteMember" data-id="{{item._id}}" data-nickname="{{item.nickname}}">
+          <view class="tag-avatar" style="background-color: {{item.avatarColor}};">
+            <text class="tag-char">{{item.nickname[0]}}</text>
+          </view>
+          <text class="tag-name">{{item.nickname}}</text>
+          <text class="tag-index">#{{index + 1}}</text>
+          <view class="tag-close">
+            <text>✕</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <t-empty 
+    wx:if="{{members.length === 0 && !loading}}"
+    icon="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f465.png"
+    description="还没有成员，快来添加吧"
+  />
+
+  <!-- 添加成员表单 -->
+  <view class="card add-form">
+    <text class="form-title">添加成员</text>
+    <view class="form-row flex-between">
+      <input 
+        class="nickname-input"
+        placeholder="输入成员昵称..."
+        placeholder-class="placeholder-style"
+        value="{{newNickname}}"
+        bindinput="onNicknameInput"
+        maxlength="10"
+        confirm-type="done"
+        bindconfirm="onAddMember"
+      />
+      <t-button 
+        size="small"
+        theme="primary"
+        icon="add"
+        bind:tap="onAddMember"
+        disabled="{{!newNickname}}"
+      >
+        添加
+      </t-button>
+    </view>
+
+    <!-- 颜色预览 -->
+    <view class="color-preview mt-15" wx:if="{{newNickname}}">
+      <text class="preview-label text-tertiary">头像颜色：</text>
+      <view class="color-dot" style="background-color: {{colors[colorIndex]}};"></view>
+    </view>
+  </view>
+
+  <!-- 完成按钮（仅新建账本时显示） -->
+  <view class="finish-btn-area" wx:if="{{newBook}}">
+    <t-button 
+      theme="success"
+      block
+      size="large"
+      bind:tap="onFinish"
+      disabled="{{members.length === 0}}"
+    >
+      完成（{{members.length}}位成员）
+    </t-button>
+  </view>
+
+  <!-- 自定义删除确认弹窗 -->
+  <view class="delete-modal {{deleteConfirm.show ? 'show' : ''}}" catchtouchmove="preventMove">
+    <view class="modal-mask" catchtap="onCancelDelete"></view>
+    <view class="modal-dialog">
+      <view class="dialog-icon">🗑️</view>
+      <text class="dialog-title">确认删除</text>
+      <text class="dialog-desc">确定要删除「{{deleteConfirm.nickname}}」吗？</text>
+      <view class="dialog-btns">
+        <view class="dialog-btn cancel" catchtap="onCancelDelete">取消</view>
+        <view class="dialog-btn confirm" catchtap="onConfirmDelete">删除</view>
+      </view>
+    </view>
+  </view>
+</view>

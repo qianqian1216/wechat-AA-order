@@ -1,0 +1,80 @@
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="header-title">
+      <text class="title-text">{{slogan}}</text>
+      <text class="subtitle">轻松管理多人分账 ~</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <t-loading wx:if="{{loading}}" theme="circular" size="48rpx" text="加载中..." color="#FF6B9D" />
+
+  <!-- 空状态 -->
+  <view wx:if="{{isEmpty && !loading}}" class="empty-state">
+    <text class="empty-icon">💕</text>
+    <text class="empty-title">还没有账本哦</text>
+    <text class="empty-desc">快来创建第一个账本吧~</text>
+  </view>
+
+  <!-- 账本列表 -->
+  <scroll-view scroll-y class="book-list" wx:if="{{!isEmpty && !loading}}">
+    
+    <!-- 我创建的账本 -->
+    <view class="section-header" wx:if="{{myBooks.length > 0}}">
+      <text class="section-title">我创建的</text>
+      <text class="section-count">{{myBooks.length}}</text>
+    </view>
+    <block wx:for="{{myBooks}}" wx:key="_id">
+      <view class="card book-card" bindtap="onBookTap" data-id="{{item._id}}">
+        <!-- 单行紧凑布局：图标 + 名称 + 统计 + 分享按钮 -->
+        <view class="card-row">
+          <view class="book-icon" style="background: {{item.iconColor || '#FF6B9D'}};">
+            <text class="icon-text">{{item.name[0]}}</text>
+          </view>
+          <view class="card-info">
+            <text class="book-name">{{item.name}}</text>
+            <text class="time-text">{{item.createTimeStr}}</text>
+          </view>
+          <view class="card-stats">
+            <text class="stat-tag">{{item.memberCount || 0}}人</text>
+            <text class="stat-tag">{{item.billCount || 0}}笔</text>
+            <text class="stat-tag price">¥{{item.totalAmount || '0.00'}}</text>
+          </view>
+          <button class="share-btn" open-type="share" catchtap="setSharingBook" data-id="{{item._id}}" data-name="{{item.name}}">
+            分享
+          </button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 我添加的账本 -->
+    <view class="section-header" wx:if="{{sharedBooks.length > 0}}">
+      <text class="section-title">我添加的</text>
+      <text class="section-count">{{sharedBooks.length}}</text>
+    </view>
+    <block wx:for="{{sharedBooks}}" wx:key="_id">
+      <view class="card book-card" bindtap="onBookTap" data-id="{{item._id}}">
+        <!-- 单行紧凑布局：图标 + 名称 + 统计 -->
+        <view class="card-row">
+          <view class="book-icon" style="background: {{item.iconColor || '#FF6B9D'}};">
+            <text class="icon-text">{{item.name[0]}}</text>
+          </view>
+          <view class="card-info">
+            <text class="book-name">{{item.name}}</text>
+            <text class="time-text">{{item.createTimeStr}}</text>
+          </view>
+          <view class="card-stats">
+            <text class="stat-tag">{{item.memberCount || 0}}人</text>
+            <text class="stat-tag">{{item.billCount || 0}}笔</text>
+            <text class="stat-tag price">¥{{item.totalAmount || '0.00'}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+  </scroll-view>
+
+  <!-- 新建账本FAB按钮 -->
+  <t-fab icon="add" bind:click="onAddBook" />
+</view>

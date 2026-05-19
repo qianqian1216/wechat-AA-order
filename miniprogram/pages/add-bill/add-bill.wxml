@@ -1,0 +1,115 @@
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="form-header">
+    <text class="header-title">{{isEdit ? '编辑账单' : '添加账单'}}</text>
+    <text class="header-subtitle">{{isEdit ? '修改账单信息' : '记录一笔新的消费'}}</text>
+  </view>
+
+<!-- 金额和描述 - 合并卡片 -->
+<view class="card form-section">
+  <view class="section-title">
+    <text class="title-icon">💰</text>
+    <text>消费信息</text>
+  </view>
+
+  <view class="amount-desc-row">
+    <view class="amount-input-box compact">
+      <text class="currency-symbol">¥</text>
+      <input
+        type="digit"
+        class="amount-input"
+        placeholder="0.00"
+        placeholder-class="amount-placeholder"
+        value="{{amount}}"
+        bindinput="onAmountInput"
+        maxlength="10"
+        focus
+      />
+    </view>
+    <input
+      class="desc-input inline"
+      placeholder="消费描述..."
+      placeholder-class="desc-placeholder"
+      value="{{description}}"
+      bindinput="onDescInput"
+      maxlength="30"
+    />
+  </view>
+
+  <!-- 人均预览 -->
+  <view class="avg-preview" wx:if="{{amount && participantIds.length > 0}}">
+    <text class="preview-icon">📊</text>
+    <text class="preview-text">人均 ¥{{getAvgAmount()}}（{{participantIds.length}}人分摊）</text>
+  </view>
+</view>
+
+  <!-- 付款人选择 -->
+  <view class="card form-section">
+    <view class="section-title">
+      <text class="title-icon">👤</text>
+      <text>谁付的款？</text>
+    </view>
+    
+    <view class="option-list member-grid">
+      <view 
+        wx:for="{{members}}" 
+        wx:key="_id"
+        class="member-option {{payerId === item._id ? 'active' : ''}}"
+        bindtap="onPayerTap"
+        data-id="{{item._id}}"
+      >
+        <view class="member-avatar-sm" style="background-color: {{item.avatarColor}};">
+          <text class="avatar-char">{{item.nickname[0]}}</text>
+        </view>
+        <text class="member-name">{{item.nickname}}</text>
+        <view class="check-icon {{payerId === item._id ? 'checked' : ''}}">
+          <text wx:if="{{payerId === item._id}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 参与成员选择 -->
+  <view class="card form-section">
+    <view class="section-title flex-between">
+      <view>
+        <text class="title-icon">👥</text>
+        <text>谁参与了这次消费？</text>
+      </view>
+      <view class="quick-actions">
+        <text class="select-all-btn" catchtap="onSelectAll">全选</text>
+        <text class="divider">|</text>
+        <text class="select-all-btn" catchtap="onClearAll">清空</text>
+      </view>
+    </view>
+
+    <view class="option-list member-grid">
+      <view 
+        wx:for="{{members}}" 
+        wx:key="_id"
+        class="member-option {{item.selected ? 'active' : ''}}"
+        bindtap="onParticipantTap"
+        data-id="{{item._id}}"
+      >
+        <view class="member-avatar-sm" style="background-color: {{item.avatarColor}};">
+          <text class="avatar-char">{{item.nickname[0]}}</text>
+        </view>
+        <text class="member-name">{{item.nickname}}</text>
+        <view class="check-icon {{item.selected ? 'checked' : ''}}">
+          <text wx:if="{{item.selected}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 - 一行两个 -->
+  <view class="btn-row safe-area-bottom">
+    <view class="btn-reset" catchtap="onReset">
+      <text>🔄 重置</text>
+    </view>
+    <view class="btn-submit {{submitting ? 'disabled' : ''}}" catchtap="{{submitting ? '' : 'onSubmit'}}">
+      <text wx:if="{{!submitting}}">💾 确认保存</text>
+      <text wx:else>保存中...</text>
+    </view>
+  </view>
+</view>

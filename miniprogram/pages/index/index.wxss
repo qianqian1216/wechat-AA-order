@@ -1,0 +1,219 @@
+/* ========================================
+   🌸 首页 - 可爱风样式 🌸
+   ======================================== */
+
+/* 头部样式 */
+.header {
+  padding: 50rpx 30rpx 40rpx;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FF8E72 50%, #FFB347 100%);
+  border-radius: 0 0 48rpx 48rpx;
+  margin-bottom: 24rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '🌸';
+  position: absolute;
+  top: 20rpx;
+  right: 30rpx;
+  font-size: 60rpx;
+  opacity: 0.3;
+}
+
+.header::after {
+  content: '✨';
+  position: absolute;
+  bottom: 20rpx;
+  left: 30rpx;
+  font-size: 36rpx;
+  opacity: 0.3;
+  animation: cute-bounce 3s ease-in-out infinite;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.title-text {
+  font-size: 46rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 4rpx;
+  text-shadow: 0 4rpx 12rpx rgba(255, 107, 157, 0.3);
+}
+
+.subtitle {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 10rpx;
+}
+
+/* ========================================
+   分段标题
+   ======================================== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 30rpx 16rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.section-count {
+  font-size: 24rpx;
+  color: var(--text-tertiary);
+  background: #F5F5F5;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+/* ========================================
+   账本卡片 - 紧凑单行布局
+   ======================================== */
+.book-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-left: none !important;
+  padding: 20rpx 24rpx !important;
+}
+
+.book-card:active {
+  transform: scale(0.97) translateY(4rpx);
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* 单行容器 */
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.book-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FF6B9D, #FFB6C1) !important;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 157, 0.3);
+  flex-shrink: 0;
+}
+
+.icon-text {
+  color: #FFF;
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+/* 中间信息区 */
+.card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.book-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time-text {
+  font-size: 20rpx;
+  color: var(--text-tertiary);
+}
+
+/* 右侧统计标签 */
+.card-stats {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex-shrink: 0;
+}
+
+.stat-tag {
+  font-size: 20rpx;
+  color: var(--text-secondary);
+  background: #F5F5F5;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.stat-tag.price {
+  color: #E54D42;
+  font-weight: 700;
+  background: #FFF0F0;
+}
+
+/* 分享按钮 */
+.share-btn {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #FF6B9D, #FF8E72);
+  color: #FFFFFF;
+  border: none;
+  font-size: 20rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 30rpx;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-btn:active {
+  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+/* 列表容器 */
+.book-list {
+  height: calc(100vh - 300rpx);
+  padding-bottom: 140rpx; /* FAB空间 */
+}
+
+/* FAB按钮 - 更可爱 */
+.fab-btn {
+  position: fixed;
+  right: 30rpx;
+  bottom: calc(env(safe-area-inset-bottom) + 30rpx);
+  z-index: 100;
+}
+
+.fab-btn::after {
+  border-radius: 50% !important;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 120rpx;
+}
+
+.empty-icon { font-size: 100rpx; margin-bottom: 20rpx; animation: cute-bounce 2s ease-in-out infinite; }
+
+.empty-title { font-size: 34rpx; color: var(--text-primary); font-weight: 700; margin-bottom: 10rpx; }
+
+.empty-desc { font-size: 26rpx; color: var(--text-tertiary); }

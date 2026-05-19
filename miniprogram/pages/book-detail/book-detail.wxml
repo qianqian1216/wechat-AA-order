@@ -1,0 +1,219 @@
+<view class="page-container">
+  <!-- 加载状态 -->
+  <view class="loading-wrapper" wx:if="{{loading}}">
+    <t-loading theme="circular" size="48rpx" text="加载中..." />
+  </view>
+
+  <block wx:if="{{!loading && book}}">
+    <!-- 头部信息卡片 -->
+    <view class="header-card">
+      <view class="header-bg"></view>
+      <view class="header-content">
+        <text class="book-title">{{book.name}}</text>
+        <text class="create-time">创建于 {{book.createTimeStr}}</text>
+        
+        <!-- 总金额 + 成员头像 同一高度 -->
+        <view class="amount-row-combined mt-30">
+          <text class="amount-label">总支出</text>
+          <view class="amount-avatar-row">
+            <view class="amount-row">
+              <text class="amount-symbol">¥</text>
+              <text class="amount-value">{{totalAmount}}</text>
+            </view>
+            <!-- 成员头像组（和金额同一行） -->
+            <view class="member-avatars flex" wx:if="{{members.length > 0}}">
+              <block wx:for="{{members}}" wx:key="_id" wx:if="{{index < 6}}">
+                <view class="avatar-item-sm" style="background-color: {{item.avatarColor}};">
+                  <text class="avatar-text">{{item.nickname[0]}}</text>
+                </view>
+              </block>
+              <text class="more-count ml-10" wx:if="{{members.length > 6}}">+{{members.length - 6}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作栏（仅创建者可见） -->
+    <view class="action-bar card" wx:if="{{isOwner}}">
+      <view class="action-item" bindtap="onAddBill">
+        <view class="action-icon add">
+          <text class="icon-font">+</text>
+        </view>
+        <text class="action-text">添加账单</text>
+      </view>
+      <view class="action-divider"></view>
+      <view class="action-item" bindtap="onManageMembers">
+        <view class="action-icon member">
+          <text class="icon-font">👥</text>
+        </view>
+        <text class="action-text">管理成员</text>
+      </view>
+      <view class="action-divider"></view>
+      <view class="action-item" bindtap="onGoSettlement">
+        <view class="action-icon settlement">
+          <text class="icon-font">💡</text>
+        </view>
+        <text class="action-text">结算方案</text>
+      </view>
+    </view>
+
+    <!-- 非创建者只读提示 + 添加到我的账本 -->
+    <view class="readonly-bar" wx:if="{{!isOwner}}">
+      <view class="readonly-left">
+        <text class="readonly-icon">👀</text>
+        <text class="readonly-text">你正在查看「{{book.name}}」的账本，只读模式</text>
+      </view>
+      <button class="add-btn {{shareAdded ? 'added' : ''}}" catchtap="onAddToMyBooks" wx:if="{{!shareAdded}}">
+        📋 添加到我的
+      </button>
+      <text class="add-done" wx:else>✅ 已添加</text>
+    </view>
+
+    <!-- Tab切换区域 -->
+    <view class="tab-container card">
+      <t-tabs value="{{activeTab}}" bind:change="onTabChange" space-evenly>
+        <t-tab-panel value="bills" label="账单列表" />
+        <t-tab-panel value="stats" label="AA结算" />
+      </t-tabs>
+    </view>
+
+    <!-- 账单列表面板 -->
+    <scroll-view scroll-y class="content-area" wx:if="{{activeTab === 'bills'}}">
+      <t-empty icon="wallet" description="暂无账单记录" wx:if="{{bills.length === 0}}" />
+      
+      <block wx:for="{{bills}}" wx:key="_id">
+        <view class="card bill-card">
+          <view class="flex-between">
+            <view class="flex-column">
+              <text class="bill-desc text-bold">{{item.description}}</text>
+              <text class="bill-time">{{item.createTimeStr}}</text>
+            </view>
+            <view class="flex-center">
+              <text class="bill-amount">¥{{item.amount}}</text>
+              <!-- 操作按钮 -->
+              <view class="bill-actions ml-10" wx:if="{{isOwner}}">
+                <view class="action-btn edit-btn" catchtap="onEditBill" data-id="{{item._id}}">
+                  <text class="btn-icon">✏️</text>
+                </view>
+                <view class="action-btn delete-btn" catchtap="onDeleteBill" data-id="{{item._id}}" data-desc="{{item.description}}">
+                  <text class="btn-icon">🗑️</text>
+                </view>
+              </view>
+            </view>
+          </view>
+          
+          <view class="bill-info mt-20">
+            <view class="info-row">
+              <text class="info-label">付款人：</text>
+              <t-tag size="small" variant="light" theme="primary">{{item.payerName}}</t-tag>
+            </view>
+            <view class="info-row mt-10">
+              <text class="info-label">参与人：</text>
+              <view class="participant-tags flex-wrap">
+                <block wx:for="{{item.participants}}" wx:key="_id" wx:for-item="p">
+                  <t-tag size="small" variant="outline" class="mr-10 mb-5">{{p.nickname}}</t-tag>
+                </block>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+
+    <!-- 成员统计面板 -->
+    <scroll-view scroll-y class="content-area" wx:if="{{activeTab === 'stats'}}">
+      <!-- 已平账提示 -->
+      <view class="settled-tip" wx:if="{{stats.length > 0 && suggestions.length === 0}}">
+        <t-empty icon="check-circle" description="所有成员已平账，无需转账" />
+      </view>
+
+      <!-- 各成员结算详情 - 紧凑行 -->
+      <block wx:for="{{stats}}" wx:key="id">
+        <view class="card stat-card-compact">
+          <view class="stat-left">
+            <view class="stat-avatar-sm" style="background-color: {{item.avatarColor}};">
+              <text class="avatar-text-sm">{{item.nickname[0]}}</text>
+            </view>
+            <text class="stat-name-sm text-bold">{{item.nickname}}</text>
+          </view>
+          <view class="stat-right">
+            <view class="stat-col">
+              <text class="col-label">已付</text>
+              <text class="col-value primary">¥{{item.totalPaid}}</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-col">
+              <text class="col-label">应付</text>
+              <text class="col-value danger">¥{{item.totalShare}}</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-col highlight">
+              <text class="col-label">差额</text>
+              <text class="col-value {{item.balance >= 0 ? 'success' : 'danger'}}">{{item.balanceLabel}} ¥{{item.balanceAbs}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </block>
+
+  <!-- 建议支付方案弹窗 -->
+  <view class="suggestion-modal {{showSuggestionModal ? 'show' : ''}}" catchtouchmove="preventMove">
+    <view class="modal-mask" bindtap="onCloseSuggestion"></view>
+    <view class="modal-content bounce-in">
+      <!-- 弹窗头部 -->
+      <view class="modal-header">
+        <text class="modal-title">💡 智能结算方案</text>
+        <text class="modal-subtitle">最少转账次数结清账目</text>
+        <view class="modal-close" catchtap="onCloseSuggestion">
+          <text>✕</text>
+        </view>
+      </view>
+
+      <!-- 方案列表 -->
+      <scroll-view scroll-y class="modal-body" wx:if="{{suggestions.length > 0}}">
+        <block wx:for="{{suggestions}}" wx:key="index" wx:for-item="sug" wx:for-index="idx">
+          <view class="sug-card">
+            <view class="sug-side">
+              <view class="sug-circle" style="background-color: {{sug.fromColor}};">
+                <text>{{sug.from[0]}}</text>
+              </view>
+              <text class="sug-name">{{sug.from}}</text>
+            </view>
+            <view class="sug-mid">
+              <text class="sug-arrow">→</text>
+              <text class="sug-amt">¥{{sug.amount}}</text>
+              <text class="sug-arrow">→</text>
+            </view>
+            <view class="sug-side">
+              <view class="sug-circle" style="background-color: {{sug.toColor}};">
+                <text>{{sug.to[0]}}</text>
+              </view>
+              <text class="sug-name">{{sug.to}}</text>
+            </view>
+          </view>
+        </block>
+      </scroll-view>
+
+      <!-- 弹窗底部 -->
+      <view class="modal-footer">
+        <text class="footer-tip">共 {{suggestions.length}} 笔转账即可完成结算 ✨</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账单删除确认弹窗 -->
+  <view class="delete-modal {{deleteBillConfirm.show ? 'show' : ''}}" catchtouchmove="preventMove">
+    <view class="modal-mask" catchtap="onCancelDeleteBill"></view>
+    <view class="modal-dialog">
+      <view class="dialog-icon">🗑️</view>
+      <text class="dialog-title">确认删除</text>
+      <text class="dialog-desc">确定要删除「{{deleteBillConfirm.desc}}」吗？</text>
+      <view class="dialog-btns">
+        <view class="dialog-btn cancel" catchtap="onCancelDeleteBill">取消</view>
+        <view class="dialog-btn confirm" catchtap="onConfirmDeleteBill">删除</view>
+      </view>
+    </view>
+  </view>
+</view>

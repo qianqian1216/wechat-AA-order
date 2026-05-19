@@ -1,0 +1,190 @@
+/* ========================================
+   🌸 AA记账 - 可爱风全局样式 🌸
+   ======================================== */
+
+page {
+  /* 可爱主色调 - 粉橙渐变 */
+  --primary-color: #FF6B9D;
+  --primary-light: #FF8FAB;
+  --primary-dark: #E84A7F;
+  --secondary-color: #A78BFA;
+
+  /* 柔和背景色 */
+  --bg-primary: #FFF9FB;
+  --bg-secondary: #FFF0F5;
+  --bg-tertiary: #FFEEF5;
+  --bg-gradient: linear-gradient(180deg, #FFE5EC 0%, #FFF5F8 30%, #FFFFFF 100%);
+
+  /* 温暖文字颜色 */
+  --text-primary: #4A3D45;
+  --text-secondary: #7A6A72;
+  --text-tertiary: #B8A0AA;
+  --text-placeholder: #D4C4CC;
+
+  /* 可爱功能色 */
+  --color-danger: #FF6B6B;
+  --color-success: #6BCB77;
+  --color-warning: #FFB347;
+  --color-info: #74B9FF;
+  --color-cute-pink: #FF6B9D;
+  --color-cute-purple: #DDA0DD;
+  --color-cute-blue: #87CEEB;
+  --color-cute-yellow: #FFE66D;
+  --color-cute-mint: #98D8C8;
+
+  /* 其他变量 - 更圆润 */
+  --border-color: rgba(255, 107, 157, 0.15);
+  --shadow-sm: 0 4rpx 16rpx rgba(255, 107, 157, 0.1);
+  --shadow-md: 0 8rpx 32rpx rgba(255, 107, 157, 0.12);
+  --shadow-lg: 0 16rpx 48rpx rgba(255, 107, 157, 0.18);
+  --radius-sm: 16rpx;
+  --radius-md: 24rpx;
+  --radius-lg: 32rpx;
+  --radius-xl: 40rpx;
+  --radius-round: 50%;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  background: var(--bg-gradient);
+  box-sizing: border-box;
+}
+
+/* 清除默认样式 */
+view, text, image, button {
+  box-sizing: border-box;
+}
+
+/* 安全区域适配 */
+.safe-area-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 20rpx);
+}
+
+/* ========================================
+   通用容器 - 可爱风背景
+   ======================================== */
+.container {
+  min-height: 100vh;
+  padding: 24rpx;
+  background: var(--bg-gradient);
+}
+
+/* ========================================
+   卡片基础样式 - 更圆润更柔和
+   ======================================== */
+.card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFF9FC 100%);
+  border-radius: var(--radius-lg);
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-sm);
+  border: 2rpx solid rgba(255, 182, 193, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+  background: linear-gradient(90deg, #FF6B9D, #FFB6C1, #DDA0DD);
+  opacity: 0.6;
+}
+
+/* ========================================
+   Flex布局工具类
+   ======================================== */
+.flex { display: flex; }
+.flex-column { display: flex; flex-direction: column; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-wrap { flex-wrap: wrap; }
+
+/* ========================================
+   文字工具类
+   ======================================== */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-bold { font-weight: 700; }
+.text-primary { color: var(--primary-color); }
+.text-danger { color: var(--color-danger); }
+.text-success { color: var(--color-success); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+
+/* ========================================
+   间距工具类
+   ======================================== */
+.mt-10 { margin-top: 10rpx; }
+.mt-20 { margin-top: 20rpx; }
+.mt-25 { margin-top: 25rpx; }
+.mt-30 { margin-top: 30rpx; }
+.mb-10 { margin-bottom: 10rpx; }
+.mb-20 { margin-bottom: 20rpx; }
+.mb-30 { margin-bottom: 30rpx; }
+.ml-10 { margin-left: 10rpx; }
+.ml-15 { margin-left: 15rpx; }
+.ml-20 { margin-left: 20rpx; }
+.mr-10 { margin-right: 10rpx; }
+.mr-20 { margin-right: 20rpx; }
+.p-20 { padding: 20rpx; }
+.p-30 { padding: 30rpx; }
+
+/* ========================================
+   金额样式
+   ======================================== */
+.amount {
+  font-size: 48rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #FF6B9D, #FF8E72);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.amount-large {
+  font-size: 64rpx;
+  font-weight: 800;
+  background: linear-gradient(135deg, #FF6B9D, #FFB347);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.amount-unit {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+/* ========================================
+   可爱装饰元素
+   ======================================== */
+
+/* 波浪分隔线 */
+.wave-divider {
+  height: 40rpx;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C150,60 350,0 600,30 C850,60 1050,0 1200,30 L1200,60 L0,60 Z' fill='%23FFF0F5'/%3E%3C/svg%3E") no-repeat bottom;
+  background-size: cover;
+}
+
+/* 小圆点装饰 */
+.dot-decoration::after {
+  content: '• • •';
+  letter-spacing: 12rpx;
+  color: #FFB6C1;
+  font-size: 24rpx;
+}
+
+/* 闪烁动画 */
+@keyframes cute-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8rpx); }
+}
+
+.bounce {
+  animation: cute-bounce 2s ease-in-out infinite;
+}

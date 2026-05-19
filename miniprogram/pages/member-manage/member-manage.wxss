@@ -1,0 +1,286 @@
+/* ========================================
+   🌸 成员管理 - 标签卡片风格 🌸
+   ======================================== */
+
+page {
+  height: 100%;
+}
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFE5EC 0%, #FFF5F8 30%, #FFFFFF 100%);
+  padding-bottom: 40rpx;
+}
+
+/* 头部 */
+.header-section {
+  padding: 44rpx 28rpx 24rpx;
+}
+
+.header-title {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: block;
+}
+
+.header-desc {
+  font-size: 25rpx;
+  color: var(--text-tertiary);
+  margin-top: 8rpx;
+  display: block;
+}
+
+/* 成员卡片 */
+.member-card {
+  margin: 0 24rpx 24rpx;
+  padding: 24rpx !important;
+  border-radius: var(--radius-xl) !important;
+}
+
+.new-book-tip {
+  display: flex;
+  align-items: center;
+  padding: 0 0 20rpx;
+  border-bottom: 2rpx dashed rgba(255, 182, 193, 0.25);
+  margin-bottom: 16rpx;
+}
+
+.tip-text { font-size: 25rpx; font-weight: 500; }
+
+/* 成员标签 - flex wrap 布局 */
+.member-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.member-tag {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 10rpx 14rpx 10rpx 10rpx;
+  background: linear-gradient(135deg, #FFF5F8, #FFF9FB);
+  border: 2rpx solid rgba(255, 182, 193, 0.2);
+  border-radius: 48rpx;
+  transition: all 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.member-tag:active {
+  transform: scale(0.94);
+  opacity: 0.7;
+}
+
+.tag-avatar {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #FFF;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.tag-char {
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #FFF;
+}
+
+.tag-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tag-index {
+  font-size: 18rpx;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.tag-close {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 50%;
+  background: rgba(255, 107, 107, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18rpx;
+  color: #FF6B6B;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.member-tag:active .tag-close {
+  background: rgba(255, 107, 107, 0.3);
+}
+
+/* 空状态 */
+t-empty {
+  display: block;
+  padding-top: 120rpx;
+}
+
+/* 添加表单 - 正常流布局 */
+.add-form {
+  margin: 0 24rpx;
+  padding: 26rpx !important;
+  background: linear-gradient(180deg, rgba(255, 245, 248, 0.98), #FFF9FB);
+  border-radius: var(--radius-xl) !important;
+  box-shadow: 0 4rpx 24rpx rgba(255, 107, 157, 0.12);
+}
+
+.form-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 14rpx;
+  display: block;
+}
+
+.form-row { gap: 16rpx; }
+
+.nickname-input {
+  flex: 1;
+  height: 80rpx;
+  font-size: 29rpx;
+  padding: 0 24rpx;
+  background: linear-gradient(135deg, #FFF5F8, #FFF9FB);
+  border-radius: var(--radius-md);
+  border: 2rpx solid rgba(255, 182, 193, 0.25);
+  color: var(--text-primary);
+}
+
+.placeholder-style { color: var(--text-placeholder); }
+
+.color-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.preview-label { font-size: 24rpx; color: var(--text-secondary); }
+
+.color-dot {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 3rpx solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 完成按钮 */
+.finish-btn-area {
+  padding: 16rpx 24rpx 0;
+}
+
+/* ========================================
+   自定义删除确认弹窗
+   ======================================== */
+.delete-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.delete-modal.show {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+}
+
+.delete-modal .modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8rpx);
+}
+
+.modal-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  width: 560rpx;
+  background: linear-gradient(180deg, #FFF5F8, #FFFFFF);
+  border-radius: 40rpx;
+  padding: 48rpx 36rpx 0;
+  text-align: center;
+  box-shadow: 0 20rpx 80rpx rgba(255, 107, 157, 0.25);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.delete-modal.show .modal-dialog {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.dialog-icon {
+  font-size: 72rpx;
+  margin-bottom: 16rpx;
+}
+
+.dialog-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.dialog-desc {
+  font-size: 27rpx;
+  color: var(--text-secondary);
+  display: block;
+  line-height: 1.6;
+  padding: 0 8rpx;
+}
+
+.dialog-btns {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 36rpx;
+  padding-bottom: 28rpx;
+}
+
+.dialog-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.dialog-btn:active { transform: scale(0.95); }
+
+.dialog-btn.cancel {
+  background: linear-gradient(135deg, #F5F5F5, #EEE);
+  color: var(--text-secondary);
+}
+
+.dialog-btn.confirm {
+  background: linear-gradient(135deg, #FF6B9D, #FF8E72);
+  color: #FFF;
+  box-shadow: 0 6rpx 24rpx rgba(255, 107, 157, 0.35);
+}

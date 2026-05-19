@@ -1,0 +1,82 @@
+<view class="container">
+  <!-- 授权界面 -->
+  <block wx:if="{{!authorized && !authChecking}}">
+    <view class="auth-card">
+      <view class="auth-icon">🔐</view>
+      <text class="auth-title">需要授权</text>
+      <text class="auth-desc">创建账本需要获取你的微信信息，以便你管理创建的账本</text>
+      <t-button 
+        theme="primary" 
+        size="large"
+        block
+        bind:tap="onAuthorize"
+      >
+        微信授权登录
+      </t-button>
+      <text class="auth-tip">授权后即可创建自己的账本</text>
+    </view>
+  </block>
+
+  <!-- 授权检查中 -->
+  <view class="auth-loading" wx:if="{{authChecking}}">
+    <t-loading theme="circular" size="48rpx" text="检查授权状态..." />
+  </view>
+
+  <!-- 已授权，显示表单 -->
+  <block wx:if="{{authorized}}">
+    <!-- 引导说明 -->
+    <view class="guide-card">
+      <view class="guide-header">
+        <text class="guide-icon">📖</text>
+        <text class="guide-title text-bold">创建新账本</text>
+      </view>
+      <text class="guide-desc text-tertiary">给你们的AA记账起个名字吧</text>
+    </view>
+
+    <!-- 输入表单 -->
+    <view class="card form-card">
+      <view class="form-field">
+        <text class="field-label">账本名称</text>
+        <t-input
+          value="{{name}}"
+          placeholder="例如：公司团建、周末聚餐、旅行费用..."
+          bind:change="onNameInput"
+          clearable
+          maxlength="20"
+          size="large"
+        />
+        <text class="field-hint text-tertiary">{{name.length}}/20</text>
+      </view>
+    </view>
+
+    <!-- 功能提示 -->
+    <view class="tips-section">
+      <view class="tip-item">
+        <text class="tip-num">1</text>
+        <text class="tip-text">创建账本后可以添加参与AA的成员</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-num">2</text>
+        <text class="tip-text">账本支持分享给好友查看或共同记账</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-num">3</text>
+        <text class="tip-text">自动计算每个人的应付/已付/差额</text>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="btn-area safe-area-bottom">
+      <t-button 
+        theme="primary" 
+        block 
+        size="large"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+        bind:tap="onSubmit"
+      >
+        创建账本
+      </t-button>
+    </view>
+  </block>
+</view>
