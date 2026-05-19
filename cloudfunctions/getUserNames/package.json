@@ -1,0 +1,9 @@
+{
+  "name": "getUserNames",
+  "version": "1.0.0",
+  "description": "根据openid批量查询用户昵称",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

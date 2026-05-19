@@ -34,8 +34,8 @@
       </view>
     </view>
 
-    <!-- 操作栏（仅创建者可见） -->
-    <view class="action-bar card" wx:if="{{isOwner}}">
+    <!-- 操作栏 -->
+    <view class="action-bar card">
       <view class="action-item" bindtap="onAddBill">
         <view class="action-icon add">
           <text class="icon-font">+</text>
@@ -43,13 +43,13 @@
         <text class="action-text">添加账单</text>
       </view>
       <view class="action-divider"></view>
-      <view class="action-item" bindtap="onManageMembers">
+      <view class="action-item" bindtap="onManageMembers" wx:if="{{isOwner}}">
         <view class="action-icon member">
           <text class="icon-font">👥</text>
         </view>
         <text class="action-text">管理成员</text>
       </view>
-      <view class="action-divider"></view>
+      <view class="action-divider" wx:if="{{isOwner}}"></view>
       <view class="action-item" bindtap="onGoSettlement">
         <view class="action-icon settlement">
           <text class="icon-font">💡</text>
@@ -58,11 +58,11 @@
       </view>
     </view>
 
-    <!-- 非创建者只读提示 + 添加到我的账本 -->
+    <!-- 非创建者添加到我 + 只读提示 -->
     <view class="readonly-bar" wx:if="{{!isOwner}}">
       <view class="readonly-left">
         <text class="readonly-icon">👀</text>
-        <text class="readonly-text">你正在查看「{{book.name}}」的账本，只读模式</text>
+        <text class="readonly-text">你正在查看「{{book.name}}」的账本</text>
       </view>
       <button class="add-btn {{shareAdded ? 'added' : ''}}" catchtap="onAddToMyBooks" wx:if="{{!shareAdded}}">
         📋 添加到我的
@@ -91,12 +91,12 @@
             </view>
             <view class="flex-center">
               <text class="bill-amount">¥{{item.amount}}</text>
-              <!-- 操作按钮 -->
-              <view class="bill-actions ml-10" wx:if="{{isOwner}}">
-                <view class="action-btn edit-btn" catchtap="onEditBill" data-id="{{item._id}}">
+              <!-- 操作按钮（只能操作自己创建的账单，历史数据无创建人则都可操作） -->
+              <view class="bill-actions ml-10" wx:if="{{!item.creatorOpenid || item.creatorOpenid === currentOpenid}}">
+                <view class="action-btn edit-btn" catchtap="onEditBill" data-id="{{item._id}}" data-creator="{{item.creatorOpenid}}">
                   <text class="btn-icon">✏️</text>
                 </view>
-                <view class="action-btn delete-btn" catchtap="onDeleteBill" data-id="{{item._id}}" data-desc="{{item.description}}">
+                <view class="action-btn delete-btn" catchtap="onDeleteBill" data-id="{{item._id}}" data-desc="{{item.description}}" data-creator="{{item.creatorOpenid}}">
                   <text class="btn-icon">🗑️</text>
                 </view>
               </view>
@@ -104,16 +104,24 @@
           </view>
           
           <view class="bill-info mt-20">
-            <view class="info-row">
-              <text class="info-label">付款人：</text>
-              <t-tag size="small" variant="light" theme="primary">{{item.payerName}}</t-tag>
-            </view>
-            <view class="info-row mt-10">
-              <text class="info-label">参与人：</text>
-              <view class="participant-tags flex-wrap">
-                <block wx:for="{{item.participants}}" wx:key="_id" wx:for-item="p">
-                  <t-tag size="small" variant="outline" class="mr-10 mb-5">{{p.nickname}}</t-tag>
-                </block>
+            <view class="info-row space-between">
+              <view class="info-left">
+                <view class="info-row">
+                  <text class="info-label">付款人：</text>
+                  <t-tag size="small" variant="light" theme="primary">{{item.payerName}}</t-tag>
+                </view>
+                <view class="info-row mt-10">
+                  <text class="info-label">参与人：</text>
+                  <view class="participant-tags flex-wrap">
+                    <block wx:for="{{item.participants}}" wx:key="_id" wx:for-item="p">
+                      <t-tag size="small" variant="outline" class="mr-10 mb-5">{{p.nickname}}</t-tag>
+                    </block>
+                  </view>
+                </view>
+              </view>
+              <view class="info-right">
+                <text class="info-label">创建人</text>
+                <t-tag size="small" variant="light" theme="default">{{item.creatorName || '—'}}</t-tag>
               </view>
             </view>
           </view>

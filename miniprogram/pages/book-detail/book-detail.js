@@ -14,6 +14,7 @@ Page({
     loading: false,
     isOwner: false,
     shareAdded: false,
+    currentOpenid: '',
     isLoggedIn: false,
     showSuggestionModal: false,  // 弹窗显示状态
     deleteBillConfirm: { show: false, id: '', desc: '' },
@@ -113,18 +114,41 @@ Page({
       const members = membersRes.data || []
       const bills = billsRes.data || []
 
+      // 查询账单创建人的昵称（通过云函数，避免跨用户查询限制）
+      const creatorOpenids = [...new Set(bills.map(b => b.creatorOpenid).filter(Boolean))]
+      let creatorMap = {}
+      if (creatorOpenids.length > 0) {
+        try {
+          const userRes = await wx.cloud.callFunction({
+            name: 'getUserNames',
+            data: { openids: creatorOpenids }
+          })
+          if (userRes.result && userRes.result.success) {
+            creatorMap = userRes.result.data || {}
+          }
+        } catch (userErr) {
+          console.warn('查询创建人昵称失败:', userErr)
+        }
+      }
+      // 给每条账单附加创建人昵称
+      const billsWithCreator = bills.map(b => ({
+        ...b,
+        creatorName: b.creatorOpenid ? (creatorMap[b.creatorOpenid] || '—') : ''
+      }))
+
       // 计算统计数据
       const { stats, totalAmount, suggestions } = this.calcStats(members, bills)
 
       this.setData({
         book,
         members,
-        bills,
+        bills: billsWithCreator,
         stats,
         totalAmount,
         suggestions: suggestions || [],
         isOwner,
         shareAdded,
+        currentOpenid: app.globalData.openid || '',
         loading: false,
         _loaded: true
       })
@@ -307,33 +331,34 @@ Page({
     }
   },
 
-  // 添加账单
+  // 添加账单（创建者和被分享者都可添加）
   async onAddBill() {
-    if (!this.data.isOwner) {
-      wx.showToast({ title: '仅创建者可添加账单', icon: 'none' })
-      return
-    }
-    if (!this.data.isLoggedIn) {
-      wx.showModal({
-        title: '需要登录',
-        content: '添加账单前请先登录微信',
-        confirmText: '去登录',
-        success: (res) => {
-          if (res.confirm) {
-            this.doLogin(() => {
-              this.setData({ isLoggedIn: true })
-              this.goAddBill()
-            })
-          }
+    // 检查是否已授权昵称
+    const openid = app.globalData.openid
+    if (openid) {
+      try {
+        const db = wx.cloud.database()
+        const userRes = await db.collection('users').where({ _openid: openid }).get()
+        if (!userRes.data || userRes.data.length === 0) {
+          // 未授权，引导授权
+          wx.showModal({
+            title: '需要授权昵称',
+            content: '添加账单前需要获取你的微信昵称，请先授权',
+            confirmText: '去授权',
+            success: (res) => {
+              if (res.confirm) {
+                wx.navigateTo({
+                  url: `/pages/create-book/create-book?authOnly=1&returnBookId=${this.data.bookId}`
+                })
+              }
+            }
+          })
+          return
         }
-      })
-      return
+      } catch (err) {
+        console.warn('检查授权失败:', err)
+      }
     }
-
-    this.goAddBill()
-  },
-
-  goAddBill() {
     wx.navigateTo({
       url: `/pages/add-bill/add-bill?bookId=${this.data.bookId}`
     })
@@ -368,17 +393,27 @@ Page({
     })
   },
 
-  // 编辑账单
+  // 编辑账单（只能编辑自己创建的）
   onEditBill(e) {
-    const { id } = e.currentTarget.dataset
+    const { id, creator } = e.currentTarget.dataset
+    const { currentOpenid } = this.data
+    if (creator && creator !== currentOpenid) {
+      wx.showToast({ title: '只能编辑自己创建的账单', icon: 'none' })
+      return
+    }
     wx.navigateTo({
       url: `/pages/add-bill/add-bill?bookId=${this.data.bookId}&billId=${id}`
     })
   },
 
-  // 删除账单
+  // 删除账单（只能删除自己创建的）
   onDeleteBill(e) {
-    const { id, desc } = e.currentTarget.dataset
+    const { id, desc, creator } = e.currentTarget.dataset
+    const { currentOpenid } = this.data
+    if (creator && creator !== currentOpenid) {
+      wx.showToast({ title: '只能删除自己创建的账单', icon: 'none' })
+      return
+    }
     this.setData({
       deleteBillConfirm: { show: true, id, desc }
     })

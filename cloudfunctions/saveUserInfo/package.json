@@ -1,0 +1,9 @@
+{
+  "name": "saveUserInfo",
+  "version": "1.0.0",
+  "description": "保存用户微信昵称和头像",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}
